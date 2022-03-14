@@ -1,0 +1,19 @@
+{
+  "name": "moduleact",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"This is test\""
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "bin": {
+    "meact": "./cli.js"
+  },
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "meow": "^10.1.2"
+  }
+}
