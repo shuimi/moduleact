@@ -1,0 +1,16 @@
+{
+  "appName": "app",
+  "includeAppContext": true,
+  "includeRouting": true,
+  "modules": [
+    {
+      "name": "",
+      "routingProps": {
+
+      }
+    },
+    {
+
+    }
+  ]
+}
