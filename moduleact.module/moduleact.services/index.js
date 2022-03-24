@@ -1,5 +1,3 @@
-import fs from 'fs'
-import { execSync } from 'child_process'
 import readline from 'readline'
 
 export const randString = ( length ) => (Math.random() + 1).toString(36).substring(2, length + 2)

@@ -2,9 +2,9 @@
 
 import meow from 'meow'
 
-import { COMMAND, FLAG, helpMessage } from "./moduleact.config/index.js";
-import { from } from "./moduleact.services/index.js";
-import { createCommandHandlersService } from "./moduleact.services/command-handlers.service.js";
+import { COMMAND, FLAG, helpMessage } from './moduleact.module/moduleact.config/index.js'
+import { from } from './moduleact.module/moduleact.services/index.js'
+import { createCommandHandlersService } from './moduleact.module/moduleact.services/command-handlers.service.js'
 
 
 const cli = meow(helpMessage, {

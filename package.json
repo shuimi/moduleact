@@ -10,7 +10,7 @@
   "license": "ISC",
   "description": "",
   "bin": {
-    "meact": "./cli.js"
+    "meact": "cli.js"
   },
   "dependencies": {
     "chalk": "^5.0.1",

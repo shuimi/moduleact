@@ -1,4 +1,12 @@
-import { askQuestion, createDescriptorGenerator, log, randString, TextFormatService } from "./index.js";
+import {
+    askQuestion,
+    createDescriptorGenerator,
+    createFilesService,
+    createNpmService,
+    log,
+    randString,
+    TextFormatService
+} from "./index.js";
 import { FLAG, helpMessage, unknownCommandMessage } from "../moduleact.config/index.js";
 
 
@@ -9,12 +17,21 @@ const redText = TextFormatService.redText
 
 
 const DEFAULT_APP_NAME = 'app'
+const DEFAULT_TEMPLATES_DIRECTORY = './moduleact.templates'
 
 
 export const createCommandHandlersService = ( cli ) => {
 
-    const descriptorFactory = createDescriptorGenerator('Root')
+    const appDescriptor = {
+        appName: cli.flags.appName ? TextFormatService.toKebabCase(cli.flags.appName) : DEFAULT_APP_NAME,
+        useFirebase: cli.flags.useFirebase,
+        includeAppContext: cli.flags.includeAppContext,
+        includeRouting: cli.flags.includeRouting,
+    }
 
+    const descriptorFactory = createDescriptorGenerator('Root')
+    const NpmService = createNpmService(appDescriptor)
+    const FilesService = createFilesService(appDescriptor, DEFAULT_TEMPLATES_DIRECTORY)
 
     const parseStructureDeclaration = (filePath) => {
         //Todo: 1) check if file exist
@@ -32,20 +49,16 @@ export const createCommandHandlersService = ( cli ) => {
         throw Error(`04B: Required member B has incorrect format`)
     }
 
-    const injectName = () => {
-        //Todo
+    const initPipeline = () => {
+
+        FilesService.clearSrcDirectory()
+
+        //TODO:
     }
 
     const onInit = async () => {
 
         const confirmationString = randString(6)
-
-        let descriptor = {
-            appName: cli.flags.appName ? TextFormatService.toKebabCase(cli.flags.appName) : DEFAULT_APP_NAME,
-            useFirebase: cli.flags.useFirebase,
-            includeAppContext: cli.flags.includeAppContext,
-            includeRouting: cli.flags.includeRouting,
-        }
 
         if (cli.flags.declarativeStructure) {
             let filePath = cli.flags.declarativeStructure
@@ -60,19 +73,19 @@ export const createCommandHandlersService = ( cli ) => {
         else {
 
             if (cli.flags.appName) {
-                log(greenText(`App name specified: ${ pinkBoldText(descriptor.appName) }.`))
+                log(greenText(`App name specified: ${ pinkBoldText(appDescriptor.appName) }.`))
             }
             else {
                 log(greenText(`App name is not specified, the default name is ${ pinkBoldText('app') }.`))
             }
 
-            if (descriptor.useFirebase) {
+            if (appDescriptor.useFirebase) {
                 log(greenText(`Flag -${pinkBoldText(FLAG.USE_FIREBASE)} specified: ${ pinkBoldText('firebase') } dependencies and services will be added.`))
             }
-            if (descriptor.includeAppContext) {
+            if (appDescriptor.includeAppContext) {
                 log(greenText(`Flag -${pinkBoldText(FLAG.INCLUDE_APP_CONTEXT)} specified: ${ pinkBoldText('state management') } dependencies and services will be added.`))
             }
-            if (descriptor.includeRouting) {
+            if (appDescriptor.includeRouting) {
                 log(greenText(`Flag -${pinkBoldText(FLAG.INCLUDE_ROUTING)} specified: ${ pinkBoldText('routing') } dependencies and services will be added.`))
             }
         }
@@ -84,16 +97,13 @@ export const createCommandHandlersService = ( cli ) => {
 
 
         if (confirmationString === answer) {
-
-            // execSync('npm test', { stdio: 'inherit' })
-
-            // fs.writeFile('hello.txt', 'text', ( error ) => {
-            //     if (error) throw error;
-            //     // console.log("Асинхронная запись файла завершена. Содержимое файла:");
-            //     // let data = fs.readFileSync("hello.txt", "utf8");
-            //     // console.log(data);
-            // })
-
+            try {
+                log(blueBoldText(`Initialization...`))
+                initPipeline()
+            }
+            catch (InitError) {
+                log(redText(InitError.message))
+            }
         }
         else {
             log(redText(`Error. Process aborted.`))
